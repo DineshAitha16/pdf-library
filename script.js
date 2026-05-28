@@ -9,14 +9,19 @@ upload.addEventListener("change", function(e){
 
   if(!file) return;
 
-  const url = URL.createObjectURL(file);
+  const reader = new FileReader();
 
-  pdfs.push({
-    name:file.name,
-    url:url
-  });
+  reader.onload = function(event){
 
-  renderPDFs();
+    pdfs.push({
+      name:file.name,
+      data:event.target.result
+    });
+
+    renderPDFs();
+  };
+
+  reader.readAsDataURL(file);
 });
 
 function renderPDFs(){
@@ -32,16 +37,11 @@ function renderPDFs(){
     card.innerHTML = `
       <h3>${pdf.name}</h3>
 
-      <button onclick="openPDF(${index})">
-        View PDF
-      </button>
+      <a href="${pdf.data}" target="_blank">
+        <button>View PDF</button>
+      </a>
     `;
 
     pdfList.appendChild(card);
   });
-}
-
-function openPDF(index){
-
-  window.open(pdfs[index].url, "_blank");
 }
